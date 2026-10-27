@@ -724,7 +724,8 @@ func (a *Api) Receive(c *gin.Context) {
 		}
 		defer ws.Close()
 		var stop = make(chan struct{})
-		go a.handleSignalReceive(ws, number, stop)
+		// receive events carry the phone number of numbered accounts, so filter by the canonical account
+		go a.handleSignalReceive(ws, a.signalClient.CanonicalAccount(number), stop)
 		go a.wsPing(ws, stop)
 		wsPong(ws, stop)
 	} else {

@@ -436,7 +436,7 @@ func (s *SignalClient) GetSignalCliMode() SignalCliMode {
 }
 
 func (s *SignalClient) Init(maxRetries int) error {
-	s.signalCliApiConfig = utils.NewSignalCliApiConfig()
+	s.signalCliApiConfig = utils.NewSignalCliApiConfig(s.signalCliConfig)
 	err := s.signalCliApiConfig.Load(s.signalCliApiConfigPath)
 	if err != nil {
 		return err
@@ -1091,6 +1091,11 @@ func (s *SignalClient) Receive(number string, timeout int64, ignoreAttachments b
 
 		return jsonStr, nil
 	}
+}
+
+// CanonicalAccount maps the ACI of a numbered account to its phone number (see utils.CanonicalAccount).
+func (s *SignalClient) CanonicalAccount(account string) string {
+	return utils.CanonicalAccount(s.signalCliConfig, account)
 }
 
 func (s *SignalClient) GetReceiveChannel(number string) (chan JsonRpc2ReceivedMessage, string, error) {
